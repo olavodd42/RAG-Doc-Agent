@@ -1,0 +1,10 @@
+python-dotenv
+typing
+langchain
+langchain-text-splitters
+langchain-core
+langchain-community
+langchain-openai
+langchain-chroma
+langgraph
+pypdf
