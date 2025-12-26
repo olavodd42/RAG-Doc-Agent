@@ -86,7 +86,7 @@ def retriever_tool(query: str) -> str:
     return "\n\n".join(results)
 
 tools = [retriever_tool]
-llm = llm.bind_tool(tools)
+llm = llm.bind_tools(tools)
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
 
@@ -128,7 +128,7 @@ def take_action(state: AgentState) -> AgentState:
             result = tools_dict[t['name']].invoke(t['args'].get('query', ''))
             print(f"Result length: {len(str(result))}")
 
-        result.append(ToolMessage(tool_call_id=t["id"], name=t["name"], content=str(result)))
+        results.append(ToolMessage(tool_call_id=t["id"], name=t["name"], content=str(result)))
 
     print("Tools Execution Complete. Back to the model!")
     return {'messages': results}
@@ -138,7 +138,7 @@ graph.add_node("llm", call_llm)
 graph.add_node("retriever_agent", take_action)
 
 graph.add_edge(START, "llm")
-graph.add_conditional_edge(
+graph.add_conditional_edges(
     "llm",
     should_continue,
     {True: "retriever_agent", False: END}
